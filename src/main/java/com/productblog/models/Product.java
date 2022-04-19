@@ -26,7 +26,7 @@ public class Product {
     )
     private Long id;
     private String title;
-    private String decription;
+    private String description;
     private Double price;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
@@ -37,6 +37,7 @@ public class Product {
     private Category category;
     @OneToMany(mappedBy = "product")
     private List<Comment> comments;
+    private Integer likes;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 }
