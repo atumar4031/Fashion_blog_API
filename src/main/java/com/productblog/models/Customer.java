@@ -1,8 +1,6 @@
 package com.productblog.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -10,6 +8,8 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
 @Builder
 @Entity
 public class Customer {
@@ -33,5 +33,5 @@ public class Customer {
     private String email;
     private String password;
     private LocalDateTime created_at;
-    private LocalDateTime updated_at;
+    private LocalDateTime modify_at;
 }
