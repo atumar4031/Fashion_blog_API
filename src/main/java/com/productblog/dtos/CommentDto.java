@@ -13,6 +13,5 @@ public class CommentDto {
     private Long id;
     private String content;
     private Boolean status;
-
     private Product product;
 }

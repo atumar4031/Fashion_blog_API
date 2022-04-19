@@ -2,9 +2,7 @@ package com.productblog.models;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 @NoArgsConstructor
@@ -15,6 +13,15 @@ import java.util.List;
 @Entity
 public class Category {
     @Id
+    @SequenceGenerator(
+            name = "category_sequence",
+            sequenceName = "category_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.IDENTITY,
+            generator = "category_sequence"
+    )
     private Long id;
     private String name;
     @OneToMany(mappedBy = "category")

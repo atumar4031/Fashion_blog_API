@@ -29,9 +29,12 @@ public class Customer {
     @NotNull(message = "last name is required")
     private String lastName;
     @Email
-    @Column(name = "email_address",nullable = false)
+    @Column(name = "email_address",
+            nullable = false)
     private String email;
     private String password;
+    @OneToOne(mappedBy = "customer")
+    private Comment comment;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 }
