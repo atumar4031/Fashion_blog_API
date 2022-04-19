@@ -26,14 +26,19 @@ public class Comment {
     private String content;
     private Boolean status;
     @ManyToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER
+            cascade = CascadeType.ALL
     )
     @JoinColumn(
             name = "product_id",
             referencedColumnName = "id"
     )
     private Product product;
+    @OneToOne
+    @JoinColumn(
+            name = "customer_id",
+            referencedColumnName = "id"
+    )
+    private Customer customer;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 }
