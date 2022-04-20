@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 public class ApiExceptionHandler {
 
     @ExceptionHandler({
-            CustomerNotFound.class,
-            CustomerAlreadyExist.class,
-            ProductNotFound.class,
-            ProductAlreadyExist.class,
+            UserNotFound.class,
+            UserAlreadyExist.class,
+            PostNotFound.class,
+            PostAlreadyExist.class,
             CategoryNotFound.class,
             CategoryAlreadyExist.class,
             CommentNotFound.class,
