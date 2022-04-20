@@ -8,6 +8,8 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 @Entity(name="users")
 public class User {
