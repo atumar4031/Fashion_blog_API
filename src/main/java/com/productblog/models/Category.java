@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @Builder
 @Entity
+@Table(name="categories")
 public class Category {
     @Id
     @SequenceGenerator(
@@ -19,7 +20,7 @@ public class Category {
             allocationSize = 1
     )
     @GeneratedValue(
-            strategy = GenerationType.IDENTITY,
+            strategy = GenerationType.SEQUENCE,
             generator = "category_sequence"
     )
     private Long id;

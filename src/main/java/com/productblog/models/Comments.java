@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @Entity
-public class Comment {
+@Table(name="user_comment")
+public class Comments {
     @Id
     @SequenceGenerator(
             name = "comment_sequence",
@@ -19,15 +20,13 @@ public class Comment {
             allocationSize = 1
     )
     @GeneratedValue(
-            strategy = GenerationType.IDENTITY,
+            strategy = GenerationType.SEQUENCE,
             generator = "comment_sequence"
     )
     private Long id;
     private String content;
     private Boolean status;
-    @ManyToOne(
-            cascade = CascadeType.ALL
-    )
+    @ManyToOne
     @JoinColumn(
             name = "product_id",
             referencedColumnName = "id"
