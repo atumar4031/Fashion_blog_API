@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Builder
 @Entity
+@Table(name="products")
 public class Product {
     @Id
     @SequenceGenerator(
@@ -21,7 +22,7 @@ public class Product {
             allocationSize = 1
     )
     @GeneratedValue(
-            strategy = GenerationType.IDENTITY,
+            strategy = GenerationType.SEQUENCE,
             generator = "product_sequence"
     )
     private Long id;
@@ -31,14 +32,13 @@ public class Product {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             name = "category_id",
-            nullable = false,
             referencedColumnName = "id"
     )
     private Category category;
     @OneToMany(mappedBy = "product")
-    private List<Comment> comments;
+    private List<Comments> comments;
     @OneToMany(mappedBy = "product")
-    private  List<Like> like;
+    private  List<Likes> likes;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 }

@@ -6,12 +6,15 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @Builder
 @Entity
+@Table(name="customers")
 public class Customer {
     @Id
     @SequenceGenerator(
@@ -34,9 +37,9 @@ public class Customer {
     private String email;
     private String password;
     @OneToOne(mappedBy = "customer")
-    private Comment comment;
-    @OneToOne(mappedBy = "product")
-    private Like like;
+    private Comments comment;
+    @OneToMany(mappedBy = "product")
+    private List<Likes> like;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 }

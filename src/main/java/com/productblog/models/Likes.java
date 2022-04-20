@@ -11,7 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Like {
+@Table(name= "likes")
+public class Likes {
     @Id
     @SequenceGenerator(
             name = "like_sequence",
@@ -19,17 +20,14 @@ public class Like {
             allocationSize = 1
     )
     @GeneratedValue(
-            strategy = GenerationType.IDENTITY,
+            strategy = GenerationType.SEQUENCE,
             generator = "like_sequence"
     )
     private Long id;
     private Long likes;
     private Long dislikes;
-    @OneToMany
-    @JoinColumn(
-            name = "customer_id",
-            referencedColumnName = "id")
-    private List<Customer> customer;
+    @ManyToOne
+    private Customer customer;
     @ManyToOne
     @JoinColumn(
             name = "product_id",
