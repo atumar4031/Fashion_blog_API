@@ -35,6 +35,8 @@ public class Customer {
     private String password;
     @OneToOne(mappedBy = "customer")
     private Comment comment;
+    @OneToOne(mappedBy = "product")
+    private Like like;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 }

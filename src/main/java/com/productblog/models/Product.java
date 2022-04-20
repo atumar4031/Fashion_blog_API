@@ -37,7 +37,8 @@ public class Product {
     private Category category;
     @OneToMany(mappedBy = "product")
     private List<Comment> comments;
-    private Integer likes;
+    @OneToMany(mappedBy = "product")
+    private  List<Like> like;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 }
