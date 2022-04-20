@@ -1,18 +1,17 @@
 package com.productblog.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
 @Builder
-@Entity
-@Table(name= "likes")
-public class Likes {
+@Entity(name="likes")
+public class Like {
     @Id
     @SequenceGenerator(
             name = "like_sequence",
@@ -27,10 +26,13 @@ public class Likes {
     private Long likes;
     private Long dislikes;
     @ManyToOne
-    private Customer customer;
+    private User user;
     @ManyToOne
     @JoinColumn(
-            name = "product_id",
+            name = "post_id",
             referencedColumnName = "id")
-    private Product product;
+    private Post post;
+
+    private LocalDateTime created_at;
+    private LocalDateTime modify_at;
 }

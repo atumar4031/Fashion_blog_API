@@ -8,26 +8,31 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
-@Getter
 @Builder
-@Entity(name="category")
-
-public class Category {
+@Entity(name="users")
+public class User {
     @Id
     @SequenceGenerator(
-            name = "category_sequence",
-            sequenceName = "category_sequence",
+            name ="user_sequence",
+            sequenceName = "user_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "category_sequence"
+            generator = "user_sequence"
     )
     private Long id;
-    private String name;
-    @OneToMany(mappedBy = "category")
-    private List<Post> post;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String role;
+
+    @OneToMany(mappedBy = "post")
+    private List<Like> like;
+
+    @OneToOne(mappedBy = "user")
+    private Comment comment;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
+
 }

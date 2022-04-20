@@ -1,6 +1,6 @@
 package com.productblog.dtos;
 
-import com.productblog.models.Product;
+import com.productblog.models.Post;
 import lombok.*;
 
 
@@ -13,5 +13,5 @@ public class CommentDto {
     private Long id;
     private String content;
     private Boolean status;
-    private Product product;
+    private Post product;
 }

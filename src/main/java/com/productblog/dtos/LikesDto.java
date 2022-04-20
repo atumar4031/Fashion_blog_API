@@ -1,19 +1,17 @@
 package com.productblog.dtos;
+
 import lombok.*;
 
 import java.time.LocalDateTime;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @Builder
-public class ProductDto {
+public class LikesDto {
     private Long id;
-    private String title;
-    private String description;
-    private Double price;
-    private Integer likes;
+    private Long likes;
+    private Long dislikes;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 }

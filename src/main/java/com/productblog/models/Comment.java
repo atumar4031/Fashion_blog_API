@@ -4,30 +4,36 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @Builder
-@Entity(name="category")
-
-public class Category {
+@Entity(name = "comments")
+public class Comment {
     @Id
     @SequenceGenerator(
-            name = "category_sequence",
-            sequenceName = "category_sequence",
+            name = "comment_sequence",
+            sequenceName = "comment_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "category_sequence"
+            generator = "comment_sequence"
     )
     private Long id;
-    private String name;
-    @OneToMany(mappedBy = "category")
-    private List<Post> post;
+    private String content;
+    private Boolean status;
+    @ManyToOne
+    @JoinColumn(
+            name = "post_id",
+            referencedColumnName = "id"
+    )
+    private Post post;
+
+    @OneToOne
+    private User user;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 }

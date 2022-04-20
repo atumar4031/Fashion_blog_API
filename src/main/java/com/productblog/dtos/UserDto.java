@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @Getter
 @Builder
-public class CustomerDto {
+public class UserDto {
     private Long id;
     private String firstName;
     private String lastName;

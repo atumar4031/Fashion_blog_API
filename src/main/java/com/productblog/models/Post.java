@@ -1,43 +1,43 @@
 package com.productblog.models;
 
+
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @Builder
-@Entity
-@Table(name="user_comment")
-public class Comments {
+@Entity(name="posts")
+public class Post {
     @Id
     @SequenceGenerator(
-            name = "comment_sequence",
-            sequenceName = "comment_sequence",
+            name = "post_sequence",
+            sequenceName = "post_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "comment_sequence"
+            generator = "post_sequence"
     )
     private Long id;
-    private String content;
-    private Boolean status;
+    private String title;
+    private String description;
+    private Double price;
     @ManyToOne
     @JoinColumn(
-            name = "product_id",
+            name = "category_id",
             referencedColumnName = "id"
     )
-    private Product product;
-    @OneToOne
-    @JoinColumn(
-            name = "customer_id",
-            referencedColumnName = "id"
-    )
-    private Customer customer;
+    private Category category;
+    @OneToMany(mappedBy = "post")
+    private List<Comment> userComment;
+    @OneToMany(mappedBy = "post")
+    private  List<Like> like;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 }
