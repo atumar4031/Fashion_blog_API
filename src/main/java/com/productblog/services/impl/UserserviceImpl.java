@@ -9,8 +9,10 @@ import com.productblog.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserserviceImpl implements UserService {
@@ -25,14 +27,20 @@ public class UserserviceImpl implements UserService {
 
     @Override
     public void createUser(UserDto userDto) {
-        userRepository.findByEmail(userDto.getEmail())
-                .orElseThrow(()-> new UserAlreadyExist("this email"+ userDto.getEmail()+" has been taken"));
+        Optional<User> selected = userRepository.findByEmail(userDto.getEmail());
+               if (selected.isPresent())
+                   throw new UserAlreadyExist("this email"+ userDto.getEmail()+" has been taken");
 
         User  user = User.builder()
                 .firstName(userDto.getFirstName())
                 .lastName(userDto.getLastName())
                 .email(userDto.getEmail())
                 .role(userDto.getRole())
+                .created_at( LocalDateTime.of(
+                        2022, 12, 1,
+                        8, 0, 0))
+                .modify_at(
+                        LocalDateTime.of(2022, 12, 1,  8, 0, 0))
                 .build();
 
         userRepository.save(user);
@@ -46,6 +54,8 @@ public class UserserviceImpl implements UserService {
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
+        user.setModify_at(
+                LocalDateTime.of(2022, 12, 1,  8, 0, 0));
 
         userRepository.save(user);
     }
@@ -66,7 +76,7 @@ public class UserserviceImpl implements UserService {
     @Override
     public List<UserDto> fetchUsers() {
         List<UserDto> usersDto = new ArrayList<>();
-       List<User> users =  userRepository.findAll();
+        List<User> users =  userRepository.findAll();
            for (User user: users)
                usersDto.add(new UserDto(user.getFirstName(),
                        user.getLastName(),user.getEmail(), user.getRole()));
