@@ -4,7 +4,7 @@ import com.productblog.dtos.PostDto;
 
 import java.util.List;
 
-public interface PostManagementService {
+public interface PostService {
     PostDto createPost(PostDto product);
     PostDto updatePost(int id, PostDto productDto);
     List<PostDto> fetchPosts();

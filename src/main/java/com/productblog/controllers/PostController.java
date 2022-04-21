@@ -1,4 +1,4 @@
 package com.productblog.controllers;
 
-public class CustomerController {
+public class PostController {
 }

@@ -34,6 +34,7 @@ public class User {
 
     @OneToOne(mappedBy = "user")
     private Comment comment;
+
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 
