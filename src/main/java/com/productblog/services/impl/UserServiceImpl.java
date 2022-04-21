@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserserviceImpl implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
     @Autowired
-    public UserserviceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -36,11 +36,8 @@ public class UserserviceImpl implements UserService {
                 .lastName(userDto.getLastName())
                 .email(userDto.getEmail())
                 .role(userDto.getRole())
-                .created_at( LocalDateTime.of(
-                        2022, 12, 1,
-                        8, 0, 0))
-                .modify_at(
-                        LocalDateTime.of(2022, 12, 1,  8, 0, 0))
+                .created_at(LocalDateTime.now())
+                .modify_at(LocalDateTime.now())
                 .build();
 
         userRepository.save(user);

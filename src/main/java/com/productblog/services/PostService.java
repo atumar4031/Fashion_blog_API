@@ -5,11 +5,11 @@ import com.productblog.dtos.PostDto;
 import java.util.List;
 
 public interface PostService {
-    PostDto createPost(PostDto product);
-    PostDto updatePost(int id, PostDto productDto);
-    List<PostDto> fetchPosts();
-    PostDto findPost(int id);
-    void deletePost(int id);
-    Long totalLikes(PostDto productDto);
-    Long totalDislikes(PostDto productDto);
+    void createPost(PostDto postDto);
+    void updatePost(long id, PostDto postDto);
+    void deletePost(long id);
+    List<PostDto> findPosts();
+    PostDto findPost(long id);
+    Long totalLikes(long id);
+    Long totalDislikes(long id);
 }

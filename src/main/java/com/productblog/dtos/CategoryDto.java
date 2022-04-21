@@ -16,4 +16,7 @@ public class CategoryDto {
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 
+    public CategoryDto(String name) {
+        this.name = name;
+    }
 }

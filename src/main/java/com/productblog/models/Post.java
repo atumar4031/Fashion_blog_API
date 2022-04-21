@@ -26,9 +26,8 @@ public class Post {
 
     private String title;
     private String description;
-    private Double price;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             name = "category_id",
             referencedColumnName = "id")
@@ -37,7 +36,7 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<Comment> userComment;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
     private  List<Like> like;
 
     private LocalDateTime created_at;
