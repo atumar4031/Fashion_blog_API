@@ -30,4 +30,10 @@ public class Category {
     private List<Post> post;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
+
+    public Category(String name, LocalDateTime created_at, LocalDateTime modify_at) {
+        this.name = name;
+        this.created_at = created_at;
+        this.modify_at = modify_at;
+    }
 }
