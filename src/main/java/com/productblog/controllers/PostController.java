@@ -22,9 +22,9 @@ public class PostController {
     }
 
 
-    @PostMapping("/post/create")
-    public ResponseEntity<String> createPost(@RequestBody PostDto postDto){
-        postService.createPost(postDto);
+    @PostMapping("/post/{categoryId}/create")
+    public ResponseEntity<String> createPost(@PathVariable("categoryId") long id, @RequestBody PostDto postDto){
+        postService.createPost(id, postDto);
         return new ResponseEntity<>(
                 "post added",
                 HttpStatus.OK
