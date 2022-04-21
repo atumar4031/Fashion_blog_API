@@ -1,8 +1,11 @@
 package com.productblog.services.impl;
 
 import com.productblog.dtos.PostDto;
+import com.productblog.exception.CategoryNotFound;
 import com.productblog.exception.PostNotFound;
+import com.productblog.models.Category;
 import com.productblog.models.Post;
+import com.productblog.repositories.CategoryRepository;
 import com.productblog.repositories.PostRepository;
 import com.productblog.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,22 +20,29 @@ import java.util.Optional;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final CategoryRepository categoryRepository;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository) {
         this.postRepository = postRepository;
+        this.categoryRepository = categoryRepository;
     }
 
 
     @Override
-    public void createPost(PostDto postDto) {
-        //Todo Category category = new Category("category 2", LocalDateTime.now(), LocalDateTime.now());
-        Optional.ofNullable(postDto.getTitle())
+    public void createPost(long categoryId, PostDto postDto) {
+        Optional.ofNullable(postDto.getTitle()) // string passes // null throw an exception
                 .orElseThrow(() -> new IllegalArgumentException("Post is required"));
+
+        Optional<Category> selected = categoryRepository.findById(categoryId);
+        if(selected.isEmpty())
+            throw new CategoryNotFound("category not found");
+            Category category = selected.get();
 
         Post post = Post.builder()
                 .title(postDto.getTitle())
                 .description(postDto.getDescription())
+                .category(category)
                 .created_at(LocalDateTime.now())
                 .modify_at(LocalDateTime.now())
                 .build();

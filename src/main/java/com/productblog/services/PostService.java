@@ -5,7 +5,7 @@ import com.productblog.dtos.PostDto;
 import java.util.List;
 
 public interface PostService {
-    void createPost(PostDto postDto);
+    void createPost(long id, PostDto postDto);
     void updatePost(long id, PostDto postDto);
     void deletePost(long id);
     List<PostDto> findPosts();
