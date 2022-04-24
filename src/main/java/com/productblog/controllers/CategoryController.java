@@ -1,19 +1,16 @@
 package com.productblog.controllers;
 
 import com.productblog.dtos.CategoryDto;
-import com.productblog.dtos.UserDto;
-import com.productblog.models.Category;
-import com.productblog.services.impl.CategoryService;
+import com.productblog.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping(value="/blog/api/")
+@RequestMapping(value="/blog/api/category")
 public class CategoryController{
 
     private final CategoryService categoryService;
@@ -23,39 +20,27 @@ public class CategoryController{
         this.categoryService = categoryService;
     }
 
-    @PostMapping("/category/create")
-    public ResponseEntity<String> createCategory(@RequestBody CategoryDto categoryDto){
-        categoryService.createCategory(categoryDto);
-        return new ResponseEntity<>(
-                "category added",
-                HttpStatus.OK
-        );
+    @PostMapping("/create")
+    public CategoryDto createCategory(@RequestBody CategoryDto categoryDto){
+        return categoryService.createCategory(categoryDto);
     }
 
-    @PutMapping("/category/update/{id}")
-    public ResponseEntity<String> updateCategory(@PathVariable("id") long id,  @RequestBody CategoryDto categoryDto){
-        categoryService.updateCategory(id, categoryDto);
-        return new ResponseEntity<>(
-                "category updated",
-                HttpStatus.OK
-        );
+    @PutMapping("/update/{id}")
+    public CategoryDto updateCategory(@PathVariable("id") long id,  @RequestBody CategoryDto categoryDto){
+        return  categoryService.updateCategory(id, categoryDto);
     }
 
-    @GetMapping("/category/{id}")
-    public ResponseEntity<CategoryDto> findById(@PathVariable("id") long id){
-        CategoryDto categoryDto = categoryService.findCategory(id);
-        return new ResponseEntity<>(
-                categoryDto,
-                HttpStatus.OK
-        );
+    @GetMapping("/{id}")
+    public CategoryDto findById(@PathVariable("id") long id){
+        return categoryService.findCategory(id);
     }
 
-    @GetMapping("/category/all")
+    @GetMapping("/all")
     public List<CategoryDto> findCategories(){
-        return categoryService.fetchPCategories();
+        return categoryService.fetchAllCategories();
     }
 
-    @DeleteMapping("/category/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable("id") long id){
 
         categoryService.deleteCategory(id);

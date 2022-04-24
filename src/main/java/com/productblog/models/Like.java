@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Setter
 @Getter
 @Builder
@@ -25,9 +26,11 @@ public class Like {
     private Long id;
     private Long likes;
     private Long dislikes;
+
     @ManyToOne
     private User user;
-    @ManyToOne
+
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(
             name = "post_id",
             referencedColumnName = "id")

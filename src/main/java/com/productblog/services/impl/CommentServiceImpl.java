@@ -11,12 +11,15 @@ import com.productblog.repositories.PostRepository;
 import com.productblog.repositories.UserRepository;
 import com.productblog.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.AccessException;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class CommentServiceImpl implements CommentService {
     private final CommentReopitory commentReopitory;
     private final PostRepository postSRepository;
@@ -30,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void addComment(CommentDto commentDto, long postId, long userId) {
+    public CommentDto addComment(CommentDto commentDto, long postId, long userId) throws AccessException {
         Optional.ofNullable(commentDto.getContent()) // string passes // null throw an exception
                 .orElseThrow(() -> new IllegalArgumentException("Comment is required"));
 
@@ -39,6 +42,8 @@ public class CommentServiceImpl implements CommentService {
 
         User selectedUser = userRepository.findById(userId)
                 .orElseThrow(()-> new PostNotFound("Post is not available now"));
+        if(!selectedUser.getRole().equals("customer"))
+            throw new AccessException("You are not allowed to perform this operation");
 
         Comment comment = Comment.builder()
                 .content(commentDto.getContent())
@@ -47,21 +52,27 @@ public class CommentServiceImpl implements CommentService {
                 .created_at(LocalDateTime.now())
                 .modify_at(LocalDateTime.now())
                 .build();
-        commentReopitory.save(comment);
+        Comment createdComment = commentReopitory.save(comment);
+        return CommentDto.builder()
+                .content(createdComment.getContent())
+                .build();
     }
 
     @Override
-    public void updateComment(long id, CommentDto commentDto) {
+    public CommentDto updateComment(long id, CommentDto commentDto) {
         Comment comment = commentReopitory.findById(id).orElseThrow(
                 ()->new PostNotFound("Post not found"));
         comment.setContent(commentDto.getContent());
         comment.setModify_at(LocalDateTime.now());
-        commentReopitory.save(comment);
+        Comment updatedComment = commentReopitory.save(comment);
+        return  CommentDto.builder()
+                .content(updatedComment.getContent())
+                .build();
     }
 
     @Override
     public void deleteCooment(long id) {
-
+        commentReopitory.deleteById(id);
     }
 
     @Override

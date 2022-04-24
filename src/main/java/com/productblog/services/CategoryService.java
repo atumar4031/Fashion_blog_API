@@ -5,9 +5,9 @@ import com.productblog.dtos.CategoryDto;
 import java.util.List;
 
 public interface CategoryService {
-    CategoryDto addCategory(CategoryDto CategoryDto);
-    CategoryDto updateCategory(int id, CategoryDto CategoryDto);
-    List<CategoryDto> fetchCategory();
-    CategoryDto findCategory(int id);
-    void deleteCategory(int id);
+    CategoryDto createCategory(CategoryDto CategoryDto);
+    CategoryDto updateCategory(long id, CategoryDto CategoryDto);
+    List<CategoryDto> fetchAllCategories();
+    CategoryDto findCategory(long id);
+    void deleteCategory(long id);
 }

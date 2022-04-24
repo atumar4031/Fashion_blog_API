@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void createUser(UserDto userDto) {
+    public UserDto createUser(UserDto userDto) {
         Optional<User> selected = userRepository.findByEmail(userDto.getEmail());
                if (selected.isPresent())
                    throw new UserAlreadyExist("this email"+ userDto.getEmail()+" has been taken");
@@ -39,12 +39,18 @@ public class UserServiceImpl implements UserService {
                 .created_at(LocalDateTime.now())
                 .modify_at(LocalDateTime.now())
                 .build();
+        User createdUser = userRepository.save(user);
 
-        userRepository.save(user);
+        return UserDto.builder()
+                .firstName(createdUser.getFirstName())
+                .lastName(createdUser.getLastName())
+                .email(createdUser.getEmail())
+                .role(createdUser.getRole())
+                .build();
     }
 
     @Override
-    public void updateUser(UserDto userDto, long id) {
+    public UserDto updateUser(UserDto userDto, long id) {
         User  user = userRepository.findById(id)
                 .orElseThrow(()-> new UserNotFound("user not found"));
 
@@ -52,9 +58,16 @@ public class UserServiceImpl implements UserService {
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         user.setModify_at(
-                LocalDateTime.of(2022, 12, 1,  8, 0, 0));
+                LocalDateTime.now());
 
-        userRepository.save(user);
+        User updatedUser = userRepository.save(user);
+        return UserDto.builder()
+                .firstName(updatedUser.getFirstName())
+                .lastName(updatedUser.getLastName())
+                .email(updatedUser.getEmail())
+                .role(updatedUser.getRole())
+                .build();
+
     }
 
     @Override
@@ -63,6 +76,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(()-> new UserNotFound("user not found"));
 
        return UserDto.builder()
+               .id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())

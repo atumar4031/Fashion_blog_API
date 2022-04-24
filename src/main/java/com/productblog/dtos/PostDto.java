@@ -1,4 +1,5 @@
 package com.productblog.dtos;
+import com.productblog.models.Category;
 import lombok.*;
 
 @NoArgsConstructor
@@ -10,4 +11,5 @@ public class PostDto {
     private Long id;
     private String title;
     private String description;
+    private Category category;
 }
