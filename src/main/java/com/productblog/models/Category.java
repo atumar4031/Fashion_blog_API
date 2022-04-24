@@ -26,8 +26,8 @@ public class Category {
     )
     private Long id;
     private String name;
-    @OneToMany(mappedBy = "category")
-    private List<Post> post;
+//    @OneToMany(mappedBy = "category")
+//    private List<Post> post;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 

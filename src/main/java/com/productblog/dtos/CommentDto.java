@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class CommentDto {
     private Long id;
     private String content;
-    private Boolean status;
     private LocalDateTime created_at;
     private LocalDateTime modify_at;
 }

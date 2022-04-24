@@ -4,6 +4,7 @@ import com.productblog.dtos.CategoryDto;
 import com.productblog.exception.CategoryNotFound;
 import com.productblog.models.Category;
 import com.productblog.repositories.CategoryRepository;
+import com.productblog.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CategoryServiceImpl implements CategoryService{
-
+public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
-
 
     @Autowired
     public CategoryServiceImpl(CategoryRepository categoryRepository) {
@@ -25,7 +24,7 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public void createCategory(CategoryDto categoryDto) {
+    public CategoryDto createCategory(CategoryDto categoryDto) {
 
         Optional.ofNullable(categoryDto.getName())
                 .orElseThrow(() -> new IllegalArgumentException("Category name cannot be null"));
@@ -36,16 +35,22 @@ public class CategoryServiceImpl implements CategoryService{
                 .modify_at(LocalDateTime.now())
                 .build();
 
-        categoryRepository.save(category);
+       Category createdCategory =  categoryRepository.save(category);
+       return CategoryDto.builder()
+               .name(createdCategory.getName())
+               .build();
     }
 
     @Override
-    public void updateCategory(long id, CategoryDto categoryDto) {
+    public CategoryDto updateCategory(long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(()-> new CategoryNotFound("category not found"));
 
         category.setName(categoryDto.getName());
-        categoryRepository.save(category);
+        Category updatedCategory =  categoryRepository.save(category);
+        return CategoryDto.builder()
+                .name(updatedCategory.getName())
+                .build();
     }
 
     @Override
@@ -56,7 +61,7 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public List<CategoryDto> fetchPCategories() {
+    public List<CategoryDto> fetchAllCategories() {
         List<CategoryDto> categoryDtos =  new ArrayList<>();
         List<Category> categories = categoryRepository.findAll();
         for (Category category: categories)
