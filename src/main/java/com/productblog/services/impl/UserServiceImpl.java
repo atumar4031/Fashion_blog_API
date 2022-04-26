@@ -6,7 +6,10 @@ import com.productblog.exception.UserNotFound;
 import com.productblog.models.User;
 import com.productblog.repositories.UserRepository;
 import com.productblog.services.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,80 +21,82 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.modelMapper = new ModelMapper();
     }
 
 
     @Override
-    public UserDto createUser(UserDto userDto) {
+    public ResponseEntity<String> createUser(UserDto userDto) {
         Optional<User> selected = userRepository.findByEmail(userDto.getEmail());
                if (selected.isPresent())
                    throw new UserAlreadyExist("this email"+ userDto.getEmail()+" has been taken");
-
-        User  user = User.builder()
-                .firstName(userDto.getFirstName())
-                .lastName(userDto.getLastName())
-                .email(userDto.getEmail())
-                .role(userDto.getRole())
-                .created_at(LocalDateTime.now())
-                .modify_at(LocalDateTime.now())
-                .build();
-        User createdUser = userRepository.save(user);
-
-        return UserDto.builder()
-                .firstName(createdUser.getFirstName())
-                .lastName(createdUser.getLastName())
-                .email(createdUser.getEmail())
-                .role(createdUser.getRole())
-                .build();
+        User user = modelMapper.map(userDto, User.class);
+        user.setCreated_at(LocalDateTime.now());
+        user.setModify_at(LocalDateTime.now());
+       userRepository.save(user);
+        return new ResponseEntity<>(
+                "user created",
+                HttpStatus.ACCEPTED
+        );
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto, long id) {
+    public  ResponseEntity<String> updateUser(UserDto userDto, long id) {
         User  user = userRepository.findById(id)
                 .orElseThrow(()-> new UserNotFound("user not found"));
-
-        user.setFirstName(userDto.getFirstName());
+        if(!userDto.getFirstName().isEmpty() && !userDto.getFirstName().isBlank())
+            user.setFirstName(userDto.getFirstName());
+        if(!userDto.getLastName().isEmpty() && !userDto.getLastName().isBlank())
         user.setLastName(userDto.getLastName());
+        if(!userDto.getEmail().isEmpty() && !userDto.getEmail().isBlank())
         user.setEmail(userDto.getEmail());
-        user.setModify_at(
-                LocalDateTime.now());
+        user.setModify_at(LocalDateTime.now());
+       userRepository.save(user);
 
-        User updatedUser = userRepository.save(user);
-        return UserDto.builder()
-                .firstName(updatedUser.getFirstName())
-                .lastName(updatedUser.getLastName())
-                .email(updatedUser.getEmail())
-                .role(updatedUser.getRole())
-                .build();
-
+        return new ResponseEntity<>(
+                "user updated",
+                HttpStatus.ACCEPTED
+        );
     }
 
     @Override
-    public UserDto fetchUserById(long id) {
+    public ResponseEntity<UserDto> fetchUserById(long id) {
           User  user = userRepository.findById(id)
                 .orElseThrow(()-> new UserNotFound("user not found"));
-
-       return UserDto.builder()
-               .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build();
+          UserDto selectedUserDto = modelMapper.map(user, UserDto.class);
+       return new ResponseEntity<>(
+               selectedUserDto,
+               HttpStatus.ACCEPTED
+       );
     }
 
     @Override
-    public List<UserDto> fetchUsers() {
+    public ResponseEntity<List<UserDto>> fetchUsers() {
         List<UserDto> usersDto = new ArrayList<>();
         List<User> users =  userRepository.findAll();
            for (User user: users)
-               usersDto.add(new UserDto(user.getFirstName(),
-                       user.getLastName(),user.getEmail(), user.getRole()));
+               usersDto.add(modelMapper.map(user, UserDto.class));
+       return new ResponseEntity<>(
+               usersDto,
+               HttpStatus.ACCEPTED
+       );
+    }
 
-       return usersDto;
+    @Override
+    public ResponseEntity<UserDto> findUserByEmail(String email) {
+        User  user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new UserNotFound("user not found"));
+
+        UserDto userDto = modelMapper.map(user, UserDto.class);
+
+        return new ResponseEntity<>(
+                userDto,
+                HttpStatus.ACCEPTED
+                );
     }
 }

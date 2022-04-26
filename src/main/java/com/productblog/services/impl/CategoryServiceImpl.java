@@ -37,7 +37,10 @@ public class CategoryServiceImpl implements CategoryService {
 
        Category createdCategory =  categoryRepository.save(category);
        return CategoryDto.builder()
+               .id(createdCategory.getId())
                .name(createdCategory.getName())
+               .created_at(createdCategory.getCreated_at())
+               .modify_at(createdCategory.getModify_at())
                .build();
     }
 

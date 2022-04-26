@@ -5,7 +5,9 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,12 +19,9 @@ import java.util.List;
 public class Post {
     @Id
     @SequenceGenerator(
-            name = "post_sequence",
-            sequenceName = "post_sequence",
-            allocationSize = 1)
+            name = "post_sequence", sequenceName = "post_sequence", allocationSize = 1)
     @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "post_sequence")
+            strategy = GenerationType.SEQUENCE, generator = "post_sequence")
     private Long id;
 
     private String title;
@@ -34,11 +33,11 @@ public class Post {
             referencedColumnName = "id")
     private Category category;
 
-    @OneToMany(mappedBy = "post",fetch = FetchType.EAGER)
+    @ManyToMany
     private List<Comment> userComment;
 
     @OneToMany(mappedBy = "post")
-    private  List<Like> like;
+    private  Set<Like> like = new HashSet<>();
 
     private LocalDateTime created_at;
     private LocalDateTime modify_at;

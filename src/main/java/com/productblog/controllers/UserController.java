@@ -22,22 +22,22 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public UserDto createUser(@RequestBody UserDto userDto){
-        return  userService.createUser(userDto);
+    public ResponseEntity<String> createUser(@RequestBody UserDto userDto){
+       return userService.createUser(userDto);
     }
 
     @PutMapping("/update/{id}")
-    public UserDto updateUser(@PathVariable long id, @RequestBody UserDto userDto){
+    public ResponseEntity<String> updateUser(@PathVariable long id, @RequestBody UserDto userDto){
         return userService.updateUser(userDto, id);
     }
 
-    @GetMapping("/{uderId}")
-    public UserDto findUserById(@PathVariable("userId") long id){
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> findUserById(@PathVariable("userId") long id){
         return userService.fetchUserById(id);
     }
 
     @GetMapping("/all")
-    public List<UserDto> findUsers(){
+    public ResponseEntity<List<UserDto>> findUsers(){
         return userService.fetchUsers();
     }
 

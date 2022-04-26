@@ -1,8 +1,6 @@
 package com.productblog.services.impl;
 
-import com.productblog.dtos.CommentDto;
 import com.productblog.dtos.PostDto;
-import com.productblog.dtos.UserDto;
 import com.productblog.exception.CategoryNotFound;
 import com.productblog.exception.PostNotFound;
 import com.productblog.exception.UserNotFound;
@@ -12,9 +10,11 @@ import com.productblog.models.User;
 import com.productblog.repositories.CategoryRepository;
 import com.productblog.repositories.PostRepository;
 import com.productblog.repositories.UserRepository;
-import com.productblog.services.FeedbackService;
 import com.productblog.services.PostService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,107 +23,72 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PostServiceImpl implements PostService, FeedbackService {
+public class PostServiceImpl implements PostService{
 
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private  final ModelMapper modelMapper;
 
     @Autowired
     public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
+        this.modelMapper = new ModelMapper();
     }
 
 
     @Override
-    public PostDto createPost(long userId, long categoryId, PostDto postDto){
+    public ResponseEntity<String> createPost(long userId, long categoryId, PostDto postDto){
 
-        Optional<Category> selected = categoryRepository.findById(categoryId);
-        if(selected.isEmpty())
-            throw new CategoryNotFound("category not found");
-            Category category = selected.get();
-        User selectedUser = userRepository.findById(userId).get();
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFound("category not found"));
+        User selectedUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFound("user not found"));
 
         if(!selectedUser.getRole().equals("admin"))
             throw new UserNotFound("You are not allowed to perform this operation");
-
-        Post post = Post.builder()
-                .title(postDto.getTitle())
-                .description(postDto.getDescription())
-                .category(category)
-                .created_at(LocalDateTime.now())
-                .modify_at(LocalDateTime.now())
-                .build();
-
-        Post createdPost = postRepository.save(post);
-        return PostDto.builder()
-                .id(createdPost.getId())
-                .title(createdPost.getTitle())
-                .description(createdPost.getDescription())
-                .build();
+        Post post = modelMapper.map(postDto, Post.class);
+        post.setCategory(category);
+       postRepository.save(post);
+        return new ResponseEntity<>("post created", HttpStatus.ACCEPTED);
     }
 
     @Override
-    public PostDto updatePost(long id, PostDto postDto) {
+    public ResponseEntity<String> updatePost(long id, PostDto postDto) {
         Post post = postRepository.findById(id).orElseThrow(
-                ()->new PostNotFound("Post not found"));
-        post.setTitle(postDto.getTitle());
-        post.setDescription(postDto.getDescription());
-        post.setModify_at(LocalDateTime.now());
-        Post updatedPost = postRepository.save(post);
+                ()->new PostNotFound("post not found"));
 
-        return PostDto.builder()
-                .title(updatedPost.getTitle())
-                .description(updatedPost.getDescription())
-                .build();
+        if ( !postDto.getTitle().isEmpty() && !postDto.getTitle().isBlank()
+                && !postDto.getDescription().isEmpty() && !postDto.getDescription().isBlank()){
+            post.setTitle(postDto.getTitle());
+            post.setDescription(postDto.getDescription());
+            post.setModify_at(LocalDateTime.now());
+            postRepository.save(post);
+        }
+        return new ResponseEntity<>("post updated", HttpStatus.ACCEPTED);
     }
 
     @Override
-    public List<PostDto> findAllPosts() {
+    public ResponseEntity<List<PostDto>> findAllPosts() {
         List<PostDto> postDtos = new ArrayList<>();
         List<Post> posts =  postRepository.findAll();
         for (Post post: posts)
-            postDtos.add(new PostDto(post.getId(), post.getTitle(), post.getDescription(),post.getCategory()));
-        return postDtos;
+            postDtos.add(modelMapper.map(post, PostDto.class));
+        return new ResponseEntity<>(postDtos, HttpStatus.ACCEPTED);
     }
 
     @Override
-    public PostDto findPost(long id) {
+    public ResponseEntity<PostDto> findPost(long id) {
         Post post = postRepository.findById(id).orElseThrow(()-> new PostNotFound("post not found"));
-        return PostDto.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .category(post.getCategory())
-                .description(post.getDescription())
-                .build();
+        PostDto postDto = modelMapper.map(post, PostDto.class);
+        return new ResponseEntity<>(postDto, HttpStatus.ACCEPTED);
     }
 
     @Override
-    public void deletePost(long id) {
+    public ResponseEntity<String> deletePost(long id) {
         Post post = postRepository.findById(id).orElseThrow(()-> new PostNotFound("post not found"));
         postRepository.delete(post);
+        return new ResponseEntity<>("post deleted", HttpStatus.ACCEPTED);
     }
 
-    @Override
-    public List<CommentDto> getUserComments(UserDto userDto) {
-
-        return null;
-    }
-
-    @Override
-    public List<CommentDto> getPostComments(PostDto postDto) {
-        return null;
-    }
-
-    @Override
-    public long getPostLikes(PostDto postDto) {
-        return 0;
-    }
-
-    @Override
-    public long getPostDislikes(PostDto postDto) {
-        return 0;
-    }
 }

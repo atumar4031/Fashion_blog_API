@@ -1,5 +1,6 @@
 package com.productblog.dtos;
 import com.productblog.models.Category;
+import com.productblog.models.Comment;
 import lombok.*;
 
 @NoArgsConstructor

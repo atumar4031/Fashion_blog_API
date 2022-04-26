@@ -8,7 +8,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@Data
 @Getter
 @Setter
 @Builder
