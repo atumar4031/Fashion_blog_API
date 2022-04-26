@@ -1,12 +1,14 @@
 package com.productblog.services;
 
 import com.productblog.dtos.UserDto;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface UserService {
-    UserDto createUser(UserDto userDto);
-    UserDto updateUser(UserDto userDto, long id);
-    UserDto fetchUserById(long id);
-    List<UserDto> fetchUsers();
+    ResponseEntity<String> createUser(UserDto userDto);
+    ResponseEntity<String> updateUser(UserDto userDto, long id);
+    ResponseEntity<UserDto> fetchUserById(long id);
+    ResponseEntity<UserDto> findUserByEmail(String email);
+    ResponseEntity<List<UserDto>> fetchUsers();
 }

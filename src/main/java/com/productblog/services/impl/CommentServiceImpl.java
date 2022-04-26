@@ -47,7 +47,6 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = Comment.builder()
                 .content(commentDto.getContent())
-                .post(selectedPost)
                 .user(selectedUser)
                 .created_at(LocalDateTime.now())
                 .modify_at(LocalDateTime.now())

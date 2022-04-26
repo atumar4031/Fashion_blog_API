@@ -23,22 +23,22 @@ public class PostController {
 
 
     @PostMapping("/{categoryId}/{userId}/create")
-    public PostDto createPost(@PathVariable("userId") long userId, @PathVariable("categoryId") long categoryId, @RequestBody PostDto postDto) throws AccessException {
+    public ResponseEntity<String> createPost(@PathVariable("userId") long userId, @PathVariable("categoryId") long categoryId, @RequestBody PostDto postDto) throws AccessException {
         return postService.createPost(userId, categoryId, postDto);
 
     }
     @PutMapping("/update/{id}")
-    public PostDto updatePost(@PathVariable("id") long id, @RequestBody PostDto postDto){
+    public ResponseEntity<String> updatePost(@PathVariable("id") long id, @RequestBody PostDto postDto){
         return  postService.updatePost(id, postDto);
     }
 
     @GetMapping("/all")
-    public List<PostDto> getPosts(){
+    public ResponseEntity<List<PostDto>> getPosts(){
         return  postService.findAllPosts();
     }
 
     @GetMapping("/{id}")
-    public PostDto getPosts(@PathVariable("id") long id){
+    public ResponseEntity<PostDto> getPosts(@PathVariable("id") long id){
         return  postService.findPost(id);
     }
 
@@ -50,5 +50,4 @@ public class PostController {
                 HttpStatus.OK
         );
     }
-
 }

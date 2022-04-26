@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,13 +26,8 @@ public class Comment {
     )
     private Long id;
     private String content;
-    private Boolean status;
-    @ManyToOne
-    @JoinColumn(
-            name = "post_id",
-            referencedColumnName = "id"
-    )
-    private Post post;
+    @ManyToMany
+    private List<Post> post;
 
     @OneToOne
     private User user;
