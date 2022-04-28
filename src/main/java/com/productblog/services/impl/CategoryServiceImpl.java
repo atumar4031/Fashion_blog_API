@@ -2,10 +2,14 @@ package com.productblog.services.impl;
 
 import com.productblog.dtos.CategoryDto;
 import com.productblog.exception.CategoryNotFound;
+import com.productblog.exception.IllegalCategory;
 import com.productblog.models.Category;
 import com.productblog.repositories.CategoryRepository;
 import com.productblog.services.CategoryService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,70 +21,60 @@ import java.util.Optional;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
     public CategoryServiceImpl(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
+        modelMapper = new ModelMapper();
     }
 
     @Override
-    public CategoryDto createCategory(CategoryDto categoryDto) {
+    public ResponseEntity<String> createCategory(CategoryDto categoryDto) {
 
         Optional.ofNullable(categoryDto.getName())
-                .orElseThrow(() -> new IllegalArgumentException("Category name cannot be null"));
+                .orElseThrow(() -> new IllegalCategory("Category name cannot be null"));
 
-        Category category = Category.builder()
-                .name(categoryDto.getName())
-                .created_at(LocalDateTime.now())
-                .modify_at(LocalDateTime.now())
-                .build();
-
-       Category createdCategory =  categoryRepository.save(category);
-       return CategoryDto.builder()
-               .id(createdCategory.getId())
-               .name(createdCategory.getName())
-               .created_at(createdCategory.getCreated_at())
-               .modify_at(createdCategory.getModify_at())
-               .build();
+        Category category = modelMapper.map(categoryDto, Category.class);
+        category.setCreated_at(LocalDateTime.now());
+        category.setModify_at(LocalDateTime.now());
+        categoryRepository.save(category);
+       return new ResponseEntity<>("category created", HttpStatus.ACCEPTED);
     }
 
     @Override
-    public CategoryDto updateCategory(long id, CategoryDto categoryDto) {
+    public ResponseEntity<String> updateCategory(long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(()-> new CategoryNotFound("category not found"));
+                .orElseThrow(() -> new CategoryNotFound("category not found"));
 
         category.setName(categoryDto.getName());
-        Category updatedCategory =  categoryRepository.save(category);
-        return CategoryDto.builder()
-                .name(updatedCategory.getName())
-                .build();
+        categoryRepository.save(category);
+        return new ResponseEntity<>("category updated", HttpStatus.ACCEPTED);
     }
 
     @Override
-    public void deleteCategory(long id) {
+    public ResponseEntity<String> deleteCategory(long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(()-> new CategoryNotFound("category not found"));
         categoryRepository.delete(category);
+        return new ResponseEntity<>("category deleted", HttpStatus.ACCEPTED);
     }
 
     @Override
-    public List<CategoryDto> fetchAllCategories() {
+    public ResponseEntity<List<CategoryDto>> fetchAllCategories() {
         List<CategoryDto> categoryDtos =  new ArrayList<>();
         List<Category> categories = categoryRepository.findAll();
         for (Category category: categories)
-            categoryDtos.add(
-                    CategoryDto.builder()
-                    .name(category.getName())
-                    .build());
+            categoryDtos.add(modelMapper.map(category, CategoryDto.class));
 
-        return categoryDtos;
+        return new ResponseEntity<>(categoryDtos,HttpStatus.ACCEPTED);
     }
 
     @Override
-    public CategoryDto findCategory(long id) {
+    public ResponseEntity<CategoryDto> findCategory(long id) {
         Category category = categoryRepository.findById(id).orElseThrow(()->new CategoryNotFound("category not found"));
-        return  CategoryDto.builder()
-                .name(category.getName())
-                .build();
+        CategoryDto categoryDto = modelMapper.map(category,CategoryDto.class);
+
+       return  new ResponseEntity<>(categoryDto,HttpStatus.ACCEPTED);
     }
 }

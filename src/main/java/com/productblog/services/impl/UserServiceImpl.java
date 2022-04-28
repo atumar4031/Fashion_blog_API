@@ -89,8 +89,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<UserDto> findUserByEmail(String email) {
-        User  user = userRepository.findByEmail(email)
-                .orElseThrow(()-> new UserNotFound("user not found"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFound("user not found"));
 
         UserDto userDto = modelMapper.map(user, UserDto.class);
 

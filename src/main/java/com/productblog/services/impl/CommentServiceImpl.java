@@ -10,8 +10,11 @@ import com.productblog.repositories.CommentReopitory;
 import com.productblog.repositories.PostRepository;
 import com.productblog.repositories.UserRepository;
 import com.productblog.services.CommentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.AccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,17 +27,19 @@ public class CommentServiceImpl implements CommentService {
     private final CommentReopitory commentReopitory;
     private final PostRepository postSRepository;
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
     public CommentServiceImpl(CommentReopitory commentReopitory, PostRepository postSRepository, UserRepository userRepository) {
         this.commentReopitory = commentReopitory;
         this.postSRepository = postSRepository;
         this.userRepository = userRepository;
+        this.modelMapper = new ModelMapper();
     }
 
     @Override
-    public CommentDto addComment(CommentDto commentDto, long postId, long userId) throws AccessException {
-        Optional.ofNullable(commentDto.getContent()) // string passes // null throw an exception
+    public ResponseEntity<String> addComment(CommentDto commentDto, long postId, long userId) throws AccessException {
+        Optional.ofNullable(commentDto.getContent())
                 .orElseThrow(() -> new IllegalArgumentException("Comment is required"));
 
         Post selectedPost = postSRepository.findById(postId)
@@ -45,59 +50,49 @@ public class CommentServiceImpl implements CommentService {
         if(!selectedUser.getRole().equals("customer"))
             throw new AccessException("You are not allowed to perform this operation");
 
-        Comment comment = Comment.builder()
-                .content(commentDto.getContent())
-                .user(selectedUser)
-                .created_at(LocalDateTime.now())
-                .modify_at(LocalDateTime.now())
-                .build();
-        Comment createdComment = commentReopitory.save(comment);
-        return CommentDto.builder()
-                .content(createdComment.getContent())
-                .build();
+        Comment comment = modelMapper.map(commentDto, Comment.class);
+        comment.setCreated_at(LocalDateTime.now());
+        comment.setModify_at(LocalDateTime.now());
+        
+        commentReopitory.save(comment);
+        return new ResponseEntity<>("You have added comment", HttpStatus.ACCEPTED);
     }
 
     @Override
-    public CommentDto updateComment(long id, CommentDto commentDto) {
+    public ResponseEntity<String> updateComment(long id, CommentDto commentDto) {
         Comment comment = commentReopitory.findById(id).orElseThrow(
                 ()->new PostNotFound("Post not found"));
+
         comment.setContent(commentDto.getContent());
         comment.setModify_at(LocalDateTime.now());
-        Comment updatedComment = commentReopitory.save(comment);
-        return  CommentDto.builder()
-                .content(updatedComment.getContent())
-                .build();
+        commentReopitory.save(comment);
+        return new ResponseEntity<>("You have added comment", HttpStatus.ACCEPTED);
     }
 
     @Override
-    public void deleteCooment(long id) {
+    public ResponseEntity<String> deleteComment(long id) {
         commentReopitory.deleteById(id);
+       return new ResponseEntity<>(
+                "Comment deleted",
+                HttpStatus.OK
+        );
     }
 
     @Override
-    public CommentDto fetchComment(long id) {
+    public ResponseEntity<CommentDto> fetchComment(long id) {
             Comment comment = commentReopitory.findById(id)
                     .orElseThrow(() -> new CommentNotFound("comment not found"));
+            CommentDto commentDto = modelMapper.map(comment, CommentDto.class);
 
-        return CommentDto.builder()
-                .content(comment.getContent())
-                .created_at(comment.getCreated_at())
-                .modify_at(comment.getModify_at())
-                .build();
+        return new ResponseEntity<>(commentDto, HttpStatus.ACCEPTED);
     }
 
     @Override
-    public List<CommentDto> fetchComments() {
+    public ResponseEntity<List<CommentDto>> fetchComments() {
         List<CommentDto> commentDtos = new ArrayList<>();
         List<Comment> comments = commentReopitory.findAll();
-        for (Comment comment: comments)
-            commentDtos.add(
-                    CommentDto.builder()
-                            .content(comment.getContent())
-                            .created_at(comment.getCreated_at())
-                            .modify_at(comment.getModify_at())
-                            .build()
-            );
-        return commentDtos;
+        for (Comment comment :comments)
+            commentDtos.add(modelMapper.map(comment, CommentDto.class));
+        return new ResponseEntity<>(commentDtos, HttpStatus.ACCEPTED);
     }
 }

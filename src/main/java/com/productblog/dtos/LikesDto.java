@@ -11,6 +11,4 @@ import java.time.LocalDateTime;
 public class LikesDto {
     private Long id;
     private Long likes;
-    private LocalDateTime created_at;
-    private LocalDateTime modify_at;
 }

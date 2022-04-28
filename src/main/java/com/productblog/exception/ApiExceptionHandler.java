@@ -18,7 +18,8 @@ public class ApiExceptionHandler {
             CategoryNotFound.class,
             CategoryAlreadyExist.class,
             CommentNotFound.class,
-            LikeAlreadyExist.class
+            LikeAlreadyExist.class,
+            IllegalCategory.class
 
     })
     public ResponseEntity<ApiException> handleExceptions(Exception ex){

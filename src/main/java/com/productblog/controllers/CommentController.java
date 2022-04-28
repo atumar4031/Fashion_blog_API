@@ -21,7 +21,7 @@ public class CommentController {
     }
 
     @PostMapping("/{postId}/{userId}/create")
-    public CommentDto createComment(@PathVariable("postId") long postId,
+    public ResponseEntity<String> createComment(@PathVariable("postId") long postId,
                                                 @PathVariable("userId") long userId,
                                                 @RequestBody CommentDto commentDto) throws AccessException {
         return commentService.addComment(commentDto, postId, userId);
@@ -29,30 +29,23 @@ public class CommentController {
     }
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateComment(@PathVariable("id") long id, @RequestBody CommentDto commentDto){
-        commentService.updateComment(id, commentDto);
+        return commentService.updateComment(id, commentDto);
 
-        return new ResponseEntity<>(
-                "comment updated",
-                HttpStatus.OK
-        );
     }
 
     @GetMapping("/all")
-    public List<CommentDto> getComment(){
+    public ResponseEntity<List<CommentDto>> getComment(){
         return  commentService.fetchComments();
     }
 
     @GetMapping("/{id}")
-    public CommentDto getComment(@PathVariable("id") long id){
+    public ResponseEntity<CommentDto> getComment(@PathVariable("id") long id){
         return  commentService.fetchComment(id);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deletePost(@PathVariable("id") long id){
-        commentService.deleteCooment(id);
-        return new ResponseEntity<>(
-                "Comment deleted",
-                HttpStatus.OK
-        );
+        return commentService.deleteComment(id);
+
     }
 }
