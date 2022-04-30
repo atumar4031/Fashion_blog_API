@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("blog/api/reaction")
+@RequestMapping("/blog/api/reaction")
 public class ReactionController {
 
     private final ReactionServices likeServices;

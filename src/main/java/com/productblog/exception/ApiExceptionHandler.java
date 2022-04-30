@@ -28,9 +28,6 @@ public class ApiExceptionHandler {
           ex.getMessage(),
           LocalDateTime.now()
         );
-        return new ResponseEntity<>(
-                exception,
-                HttpStatus.BAD_REQUEST
-        );
+        return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
     }
 }
