@@ -19,14 +19,8 @@ import java.util.Set;
 
 public class Category {
     @Id
-    @SequenceGenerator(
-            name = "category_sequence",
-            sequenceName = "category_sequence",
-            allocationSize = 1
-    )
     @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "category_sequence"
+            strategy = GenerationType.IDENTITY
     )
     private Long id;
     private String name;

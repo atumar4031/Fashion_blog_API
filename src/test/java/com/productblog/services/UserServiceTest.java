@@ -13,7 +13,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
@@ -23,6 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 class UserServiceTest {
@@ -31,8 +31,10 @@ class UserServiceTest {
     private UserService userService;
     @MockBean
     private UserRepository userRepository;
+    ModelMapper modelMapper = new ModelMapper();
     private UserDto userDto1;
     private UserDto userDto2;
+    private User newUser;
 
     @BeforeEach
     void setUp() {
@@ -58,7 +60,7 @@ class UserServiceTest {
                 .role("admin")
                 .build();
 
-        User newUser = User.builder()
+         newUser = User.builder()
                 .id(3L)
                 .firstName(firstname)
                 .lastName(lastname)
@@ -90,14 +92,16 @@ class UserServiceTest {
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(userById));
         Mockito.when(userRepository.findByEmail(email)).thenReturn(Optional.ofNullable(userByEmail));
         Mockito.when(userRepository.findAll()).thenReturn(userList);
-        Mockito.when(userRepository.save(newUser)).thenReturn(newUser);
+        Mockito.when(userRepository.save(any())).thenReturn(newUser);
     }
 
     @Test
     @DisplayName("TEST: create user")
     public void shouldReturnUserDto_afterCreatingNewUser(){
-        ResponseEntity<String> responseEntity =  userService.createUser(userDto1);
-        assertEquals("user created", Objects.requireNonNull(responseEntity.getBody()));
+        UserDto userDto = modelMapper.map(newUser, UserDto.class);
+        ResponseEntity<UserDto> responseEntity =  userService.createUser(userDto);
+        assertNotNull(responseEntity.getBody());
+        assertEquals(userDto.getEmail(), responseEntity.getBody().getEmail());
     }
 
     @Test
@@ -110,8 +114,13 @@ class UserServiceTest {
     @Test
     @DisplayName("TEST: updateUser")
     public void shouldReturnUserDto_afterUpdatingUser(){
-        ResponseEntity<String> responseEntity =  userService.updateUser(userDto1, 1L);
-        assertEquals("user updated", Objects.requireNonNull(responseEntity.getBody()));
+
+        User save = userRepository.save(newUser);
+        UserDto userDto = modelMapper.map(newUser, UserDto.class);
+        userDto.setEmail("updated@gmail.com");
+        ResponseEntity<UserDto> responseEntity =  userService.updateUser(userDto, 1L);
+        assertNotNull(responseEntity.getBody());
+        assertEquals(save.getEmail(), responseEntity.getBody().getEmail());
     }
 
     @Test
@@ -120,7 +129,6 @@ class UserServiceTest {
         long id = 1L;
         ResponseEntity<UserDto> responseEntity = userService.fetchUserById(id);
         assertEquals(id, Objects.requireNonNull(responseEntity.getBody()).getId());
-        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
     }
 
     @Test
@@ -139,7 +147,6 @@ class UserServiceTest {
         String email = "atumar4031@gmail.com";
         ResponseEntity<UserDto> responseEntity = userService.findUserByEmail(email);
         assertEquals(email, Objects.requireNonNull(responseEntity.getBody()).getEmail());
-        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
     }
 
     @Test
@@ -147,6 +154,5 @@ class UserServiceTest {
     public void shouldReturnTheListOfAll_users(){
         ResponseEntity<List<UserDto>> responseEntity = userService.fetchUsers();
         assert(Objects.requireNonNull(responseEntity.getBody()).size() > 0);
-        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
     }
 }

@@ -31,22 +31,23 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResponseEntity<String> createUser(UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(UserDto userDto) {
         Optional<User> selected = userRepository.findByEmail(userDto.getEmail());
                if (selected.isPresent())
                    throw new UserAlreadyExist("this email"+ userDto.getEmail()+" has been taken");
+
         User user = modelMapper.map(userDto, User.class);
         user.setCreated_at(LocalDateTime.now());
         user.setModify_at(LocalDateTime.now());
-       userRepository.save(user);
+        UserDto userDto1 = modelMapper.map(userRepository.save(user), UserDto.class);
         return new ResponseEntity<>(
-                "user created",
-                HttpStatus.ACCEPTED
+                userDto1,
+                HttpStatus.OK
         );
     }
 
     @Override
-    public  ResponseEntity<String> updateUser(UserDto userDto, long id) {
+    public  ResponseEntity<UserDto> updateUser(UserDto userDto, long id) {
         User  user = userRepository.findById(id)
                 .orElseThrow(()-> new UserNotFound("user not found"));
         if(!userDto.getFirstName().isEmpty() && !userDto.getFirstName().isBlank())
@@ -56,11 +57,11 @@ public class UserServiceImpl implements UserService {
         if(!userDto.getEmail().isEmpty() && !userDto.getEmail().isBlank())
         user.setEmail(userDto.getEmail());
         user.setModify_at(LocalDateTime.now());
-       userRepository.save(user);
+       UserDto userDto1 = modelMapper.map(userRepository.save(user), UserDto.class);
 
         return new ResponseEntity<>(
-                "user updated",
-                HttpStatus.ACCEPTED
+                userDto1,
+                HttpStatus.OK
         );
     }
 
@@ -89,11 +90,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<UserDto> findUserByEmail(String email) {
-        User  user = userRepository.findByEmail(email)
-                .orElseThrow(()-> new UserNotFound("user not found"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFound("user not found"));
 
         UserDto userDto = modelMapper.map(user, UserDto.class);
-
         return new ResponseEntity<>(
                 userDto,
                 HttpStatus.ACCEPTED

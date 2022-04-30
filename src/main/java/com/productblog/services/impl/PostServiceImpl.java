@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements PostService{
@@ -45,10 +44,12 @@ public class PostServiceImpl implements PostService{
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFound("category not found"));
         User selectedUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFound("user not found"));
 
-        if(!selectedUser.getRole().equals("admin"))
+        if(!selectedUser.getRole().equalsIgnoreCase("admin"))
             throw new UserNotFound("You are not allowed to perform this operation");
         Post post = modelMapper.map(postDto, Post.class);
         post.setCategory(category);
+        post.setCreated_at(LocalDateTime.now());
+        post.setModify_at(LocalDateTime.now());
        postRepository.save(post);
         return new ResponseEntity<>("post created", HttpStatus.ACCEPTED);
     }

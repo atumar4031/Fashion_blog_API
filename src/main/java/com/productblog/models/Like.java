@@ -25,12 +25,11 @@ public class Like {
     )
     private Long id;
     private Long likes;
-    private Long dislikes;
 
     @ManyToOne
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(
             name = "post_id",
             referencedColumnName = "id")

@@ -22,12 +22,12 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createUser(@RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto){
        return userService.createUser(userDto);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable long id, @RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> updateUser(@PathVariable long id, @RequestBody UserDto userDto){
         return userService.updateUser(userDto, id);
     }
 

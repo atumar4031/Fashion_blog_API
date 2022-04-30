@@ -18,7 +18,8 @@ public class ApiExceptionHandler {
             CategoryNotFound.class,
             CategoryAlreadyExist.class,
             CommentNotFound.class,
-            LikeAlreadyExist.class
+            LikeAlreadyExist.class,
+            IllegalCategory.class
 
     })
     public ResponseEntity<ApiException> handleExceptions(Exception ex){
@@ -27,9 +28,6 @@ public class ApiExceptionHandler {
           ex.getMessage(),
           LocalDateTime.now()
         );
-        return new ResponseEntity<>(
-                exception,
-                HttpStatus.BAD_REQUEST
-        );
+        return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
     }
 }
